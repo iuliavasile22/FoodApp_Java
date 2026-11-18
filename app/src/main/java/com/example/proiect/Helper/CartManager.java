@@ -9,74 +9,85 @@ import com.example.proiect.Interface.ChangeIndexItemsListener;
 import java.util.ArrayList;
 
 public class CartManager {
-    private Context context;
-    private ShoppingCartDatabase database;
+    private static final String CART_KEY = "CartList";
+
+    private final Context context;
+    private final ShoppingCartDatabase database;
 
     public CartManager(Context context) {
         this.context = context;
         this.database = new ShoppingCartDatabase(context);
     }
 
-
+    /** Adds an item to the cart. If it's already there, its quantity is updated instead. */
     public void insertFood(FoodDomain item) {
         ArrayList<FoodDomain> listFood = getListCart();
+
+        // Make sure a new item has a quantity of at least 1
+        if (item.getIndexInCart() < 1) {
+            item.setIndexInCart(1);
+        }
+
         boolean existAlready = false;
-        int n = 0;
-        for (int i = 0; i < listFood.size(); i++) {
-            if (listFood.get(i).getTitle().equals(item.getTitle())) {
+        for (FoodDomain food : listFood) {
+            if (food.getTitle().equals(item.getTitle())) {
+                food.setIndexInCart(item.getIndexInCart());
                 existAlready = true;
-                n = i;
                 break;
             }
         }
-        if (existAlready) {
-            listFood.get(n).setIndexInCart(item.getIndexInCart());
-        } else {
+        if (!existAlready) {
             listFood.add(item);
         }
 
-        database.putListObject("CartList", listFood);
-        Toast.makeText(context, "Item Added to your Cart", Toast.LENGTH_SHORT).show();
+        database.putListObject(CART_KEY, listFood);
+        Toast.makeText(context, "Item added to your cart", Toast.LENGTH_SHORT).show();
     }
 
-
+    /** Returns all items in the cart, read from the database. */
     public ArrayList<FoodDomain> getListCart() {
-        ArrayList<Object> objectList = database.getListObject("CartList");
-        ArrayList<FoodDomain> foodDomainList = new ArrayList<>();
-        for (Object object : objectList) {
-            if (object instanceof FoodDomain) {
-                foodDomainList.add((FoodDomain) object);
-            }
-        }
-        return foodDomainList;
+        // FIX: the database now returns FoodDomain objects directly, no casting needed
+        return database.getListObject(CART_KEY);
     }
 
-
-
-        public void minusIndexFood (ArrayList < FoodDomain > listfood,
-        int position, ChangeIndexItemsListener changeIndexItemsListener){
-            if (listfood.get(position).getIndexInCart() == 1) {
-                listfood.remove(position);
-            } else {
-                listfood.get(position).setIndexInCart(listfood.get(position).getIndexInCart() - 1);
-            }
+    /** Decreases the quantity of an item; removes it when the quantity reaches 0. */
+    public void minusIndexFood(ArrayList<FoodDomain> listFood, int position,
+                               ChangeIndexItemsListener changeIndexItemsListener) {
+        if (listFood.get(position).getIndexInCart() == 1) {
+            listFood.remove(position);
+        } else {
+            listFood.get(position).setIndexInCart(listFood.get(position).getIndexInCart() - 1);
         }
-
-        public void plusIndexFood (ArrayList < FoodDomain > listfood,
-        int position, ChangeIndexItemsListener changeIndexItemsListener){
-            listfood.get(position).setIndexInCart(listfood.get(position).getIndexInCart() + 1);
-            database.putListObject("CartList", listfood);
-            changeIndexItemsListener.changed();
-        }
-
-        public Double GetFee () {
-            ArrayList<FoodDomain> listfood2 = getListCart();
-            double fee = 0;
-            for (int i = 0; i < listfood2.size(); i++) {
-                fee = fee + (listfood2.get(i).getFee() + listfood2.get(i).getIndexInCart());
-            }
-            return fee;
-        }
-
+        // FIX: the change is now saved and the screen is notified (both were missing)
+        database.putListObject(CART_KEY, listFood);
+        changeIndexItemsListener.changed();
     }
 
+    /** Increases the quantity of an item. */
+    public void plusIndexFood(ArrayList<FoodDomain> listFood, int position,
+                              ChangeIndexItemsListener changeIndexItemsListener) {
+        listFood.get(position).setIndexInCart(listFood.get(position).getIndexInCart() + 1);
+        database.putListObject(CART_KEY, listFood);
+        changeIndexItemsListener.changed();
+    }
+
+    /** Sum of fee x quantity for every item in the cart. */
+    public Double GetFee() {
+        double fee = 0;
+        for (FoodDomain food : getListCart()) {
+            // FIX: was fee + quantity (addition); it should be fee * quantity
+            fee += food.getFee() * food.getIndexInCart();
+        }
+        return fee;
+    }
+
+    /** Total value of the products in the cart (price x quantity), calculated by SQL. */
+    public double getTotalPrice() {
+        return database.getTotalPrice();
+    }
+
+    /** Empties the cart, e.g. after an order is placed. */
+    public void clearCart() {
+        database.clearCart();
+    }
+}

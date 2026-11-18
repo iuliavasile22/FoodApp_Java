@@ -1,6 +1,7 @@
 package com.example.proiect.Activity;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import com.example.proiect.Adapter.CategoryAdapter;
 import com.example.proiect.Adapter.PopularFoodAdapter;
 import com.example.proiect.Domain.CategoriesDomain;
 import com.example.proiect.Domain.FoodDomain;
+import com.example.proiect.Helper.ShoppingCartDatabase;
 import com.example.proiect.R;
 
 import java.util.ArrayList;
@@ -38,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayList<FoodDomain> foodList = new ArrayList<>();
         foodList.add(new FoodDomain(1, "hamburger", "burger", "a delicious hamburger with tasty flavour!", "hamburger",15.5, 10.2, 5 , 40.2, 30));
-        foodList.add(new FoodDomain(2, "vegan pizza", "vegan_p", "a delicious, healthy vegan pizza!", "vegan", 13.2,10.2, 4,  20.5, 20));
-        foodList.add(new FoodDomain(3, "pepperoni", "pizza1", "a delicious pepperoni pizza! ", "pepperoni", 10.2, 10.2, 4, 25.5, 35));
+        foodList.add(new FoodDomain(1, "vegan pizza", "vegan_p", "a delicious, healthy vegan pizza!", "vegan", 13.2,10.2, 4,  20.5, 20));
+        foodList.add(new FoodDomain(1, "pepperoni", "pizza1", "a delicious pepperoni pizza! ", "pepperoni", 10.2, 10.2, 4, 25.5, 35));
 
         adapter2 = new PopularFoodAdapter(foodList);
         recyclerViewPopularFoodList.setAdapter(adapter2);
@@ -61,6 +63,33 @@ public class MainActivity extends AppCompatActivity {
         adapter = new  CategoryAdapter(categoriesList);
         recyclerViewCategoryList.setAdapter(adapter);
 
+    }
+    private void testCartDatabase() {
+        ShoppingCartDatabase db = new ShoppingCartDatabase(this);
+
+        // 1. Start from an empty cart
+        db.clearCart();
+
+        // 2. Insert two items
+        long id1 = db.insertFoodItem(new FoodDomain(0, "hamburger", "burger",
+                "a delicious hamburger", "hamburger", 15.5, 10.2, 5, 40.2, 30));
+        long id2 = db.insertFoodItem(new FoodDomain(0, "vegan pizza", "vegan_p",
+                "a healthy vegan pizza", "vegan", 13.2, 10.2, 4, 20.5, 20));
+        Log.d("CART_TEST", "Inserted ids: " + id1 + ", " + id2);   // -1 means the insert failed
+
+        // 3. Read everything back
+        for (FoodDomain f : db.getAllFoodItems()) {
+            Log.d("CART_TEST", "Item: " + f.getTitle() + " | price " + f.getPrice()
+                    + " | photo " + f.getPicFood());
+        }
+
+        // 4. Check count and total
+        Log.d("CART_TEST", "Count: " + db.getItemCount());     // expected 2
+        Log.d("CART_TEST", "Total: " + db.getTotalPrice());    // expected 28.7
+
+        // 5. Delete one and check again
+        db.deleteItem((int) id1);
+        Log.d("CART_TEST", "Count after delete: " + db.getItemCount());  // expected 1
     }
 
 }

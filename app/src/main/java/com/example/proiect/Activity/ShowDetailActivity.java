@@ -64,7 +64,10 @@ int drawableResourceId = this.getResources().getIdentifier(obj.getPicFood(), "dr
             numberOrderTxt.setText(String.valueOf(numberOrder));
             totalPriceTxt.setText(String.valueOf(numberOrder * obj.getPrice()));
         });
-        addToCartBtn.setOnClickListener(v -> Toast.makeText(getApplicationContext(), "Item Added to your Cart", Toast.LENGTH_SHORT).show());
+        addToCartBtn.setOnClickListener(v -> {
+            obj.setIndexInCart(numberOrder);   // save the quantity chosen on screen
+            cartManager.insertFood(obj);       // write to SQLite (CartManager shows the toast itself)
+        });
     }
 
     private void initView() {
