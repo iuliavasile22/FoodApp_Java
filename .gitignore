@@ -1,0 +1,30 @@
+# IDE / OS
+*.iml
+.DS_Store
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+
+# Gradle / build output
+.gradle
+/build
+/app/build
+/captures
+.externalNativeBuild
+.cxx
+
+# Local machine settings
+local.properties
+
+# Gradle cache that ended up in the project folder
+/caches/
+/daemon/
+/jdks/
+/native/
+/wrapper/
+/android/
+/android.lock
+/.tmp/
