@@ -29,6 +29,18 @@
                 android:background="#F1F1E6">
 
                 <ImageView
+                    android:id="@+id/cartButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/imageView2"
+                    app:layout_constraintHorizontal_bias="0.539"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.222"
+                    app:srcCompat="@drawable/cart" />
+
+                <ImageView
                     android:id="@+id/imageView2"
                     android:layout_width="104dp"
                     android:layout_height="66dp"

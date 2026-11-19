@@ -1,5 +1,6 @@
 package com.example.proiect.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -30,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerViewCategory();
         recyclerViewPopularFood();
+
+        findViewById(R.id.cartButton).setOnClickListener(v ->
+                startActivity(new Intent(this, CartActivity.class)));
     }
 
     private void recyclerViewPopularFood() {

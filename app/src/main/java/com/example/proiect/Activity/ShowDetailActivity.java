@@ -65,8 +65,8 @@ int drawableResourceId = this.getResources().getIdentifier(obj.getPicFood(), "dr
             totalPriceTxt.setText(String.valueOf(numberOrder * obj.getPrice()));
         });
         addToCartBtn.setOnClickListener(v -> {
-            obj.setIndexInCart(numberOrder);   // save the quantity chosen on screen
-            cartManager.insertFood(obj);       // write to SQLite (CartManager shows the toast itself)
+            obj.setIndexInCart(numberOrder);                 // 1. save the chosen quantity
+            cartManager.insertFood(obj);                     // 2. write it to SQLite
         });
     }
 

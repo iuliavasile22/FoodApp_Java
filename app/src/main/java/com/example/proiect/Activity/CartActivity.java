@@ -1,5 +1,4 @@
 package com.example.proiect.Activity;
-
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,11 +24,11 @@ public class CartActivity extends AppCompatActivity {
     private ImageView backBtn;
 
     @Override
-    protected void OnCreate(Bundle savedInstanceState) {
+   protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
-        cartManager = new CartManager(this); //explain line
+        cartManager = new CartManager(this);
 
         initView();
         initList();
@@ -82,7 +81,7 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private String priceFormat(double value){
-        return String.format(Locale.US, "$.2f", value);
+        return String.format(Locale.US,"$%.2f", value);
     }
 }
 
