@@ -71,6 +71,12 @@ public class CartManager {
         changeIndexItemsListener.changed();
     }
 
+    public void removeFood(String title){
+        ArrayList<FoodDomain> listFood = getListCart();
+        listFood.removeIf(food -> food.getTitle().equals(title));
+        database.putListObject(CART_KEY, listFood);
+    }
+
     /** Sum of fee x quantity for every item in the cart. */
     public Double GetFee() {
         double fee = 0;

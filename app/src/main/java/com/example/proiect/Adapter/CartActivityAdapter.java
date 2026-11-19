@@ -18,6 +18,7 @@ import com.example.proiect.Interface.ChangeIndexItemsListener;
 import com.example.proiect.R;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class CartActivityAdapter extends RecyclerView.Adapter<CartActivityAdapter.ViewHolder> {
 
@@ -40,30 +41,15 @@ public class CartActivityAdapter extends RecyclerView.Adapter<CartActivityAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        FoodDomain foodItem = listFoodsSelected.get(holder.getAdapterPosition());
-        holder.title.setText(foodItem.getTitle());
-        holder.feePerItem.setText("$" + foodItem.getFee());
-        holder.total.setText("$" + Math.round(foodItem.getIndexInCart() * foodItem.getFee()));
-        holder.num.setText(String.valueOf(foodItem.getIndexInCart()));
-        String picUrl = "";
-        switch (holder.getAdapterPosition()) {
-            case 0: {
-                picUrl = "hamburger";
-                break;
-            }
-            case 1: {
-                picUrl = "pepperoni_pizza";
-                break;
-            }
-            case 2: {
-                picUrl = "vegan_pizza";
-                break;
-            }
-        }
+        FoodDomain foodItem = listFoodsSelected.get(position);
 
-        int drawableResourceId = holder.itemView.getContext().getResources().
-                getIdentifier(picUrl,"drawable",
-                        holder.itemView.getContext().getPackageName());
+        holder.title.setText(foodItem.getTitle());
+        holder.feePerItem.setText(String.format(Locale.US,"$%.2f", foodItem.getPrice()));
+        holder.total.setText(String.format(Locale.US, "$%.2f", foodItem.getPrice() * foodItem.getIndexInCart()));
+        holder.num.setText(String.valueOf(foodItem.getIndexInCart()));
+
+        int drawableResourceId = holder.itemView.getContext().getResources()
+                .getIdentifier(foodItem.getPicFood(), "drawable", holder.itemView.getContext().getPackageName());
         Glide.with(holder.itemView.getContext()).load(drawableResourceId).into(holder.photo);
 
         holder.plusItem.setOnClickListener(v -> cartManager.plusIndexFood(listFoodsSelected, holder.getAdapterPosition(), () -> {
@@ -75,6 +61,7 @@ public class CartActivityAdapter extends RecyclerView.Adapter<CartActivityAdapte
             notifyDataSetChanged();
             changeIndexItemsListener.changed();
         }));
+
     }
 
     @Override

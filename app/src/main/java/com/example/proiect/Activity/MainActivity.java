@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 5. Delete one and check again
         db.deleteItem((int) id1);
-        Log.d("CART_TEST", "Count after delete: " + db.getItemCount());  // expected 1
+        Log.d("CART_TEST", "Count after delete: " + db.getItemCount());
     }
 
 }

@@ -47,6 +47,8 @@ int drawableResourceId = this.getResources().getIdentifier(obj.getPicFood(), "dr
         priceTxt.setText("$" + obj.getPrice());
         descriptionTxt.setText(obj.getDescription());
         numberOrderTxt.setText(String.valueOf(numberOrder));
+        totalPriceTxt.setText(String.valueOf(numberOrder * obj.getPrice()));
+
         caloryTxt.setText(obj.getCalories() +" cal");
         starTxt.setText(obj.getStar() + "");
         timeTxt.setText(obj.getTime() +" mins");
@@ -58,15 +60,21 @@ int drawableResourceId = this.getResources().getIdentifier(obj.getPicFood(), "dr
         });
 
         minusBtn.setOnClickListener(v -> {
-            if(numberOrder > 1){
+            if(numberOrder > 0){
                 numberOrder = numberOrder - 1;
             }
             numberOrderTxt.setText(String.valueOf(numberOrder));
             totalPriceTxt.setText(String.valueOf(numberOrder * obj.getPrice()));
         });
+
         addToCartBtn.setOnClickListener(v -> {
-            obj.setIndexInCart(numberOrder);                 // 1. save the chosen quantity
-            cartManager.insertFood(obj);                     // 2. write it to SQLite
+            if(numberOrder == 0) {
+                cartManager.removeFood(obj.getTitle());
+                Toast.makeText(this, "Item removed from cart", Toast.LENGTH_SHORT).show();
+            } else {
+                obj.setIndexInCart(numberOrder);
+                cartManager.insertFood(obj);
+            }
         });
     }
 

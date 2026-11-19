@@ -8,9 +8,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.proiect.Adapter.CartActivityAdapter;
+import com.example.proiect.Domain.FoodDomain;
 import  com.example.proiect.Helper.CartManager;
 import com.example.proiect.R;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class CartActivity extends AppCompatActivity {
@@ -22,6 +25,9 @@ public class CartActivity extends AppCompatActivity {
     private RecyclerView recyclerViewCart;
     private TextView productsTxt, deliveryTxt, taxTxt, totalTxt, checkoutBtn;
     private ImageView backBtn;
+
+    private ArrayList<FoodDomain> cartList;
+    private CartActivityAdapter adapter;
 
     @Override
    protected void onCreate(Bundle savedInstanceState)  {
@@ -54,18 +60,24 @@ public class CartActivity extends AppCompatActivity {
         backBtn.setOnClickListener(v -> finish());
 
         checkoutBtn.setOnClickListener(v -> {
-            if (cartManager.getListCart().isEmpty()) {
+            if(cartList.isEmpty()){
                 Toast.makeText(this, "Your cart is empty", Toast.LENGTH_SHORT).show();
                 return;
             }
-            cartManager.clearCart();
-            Toast.makeText(this, "Order placed!", Toast.LENGTH_SHORT).show();
+            cartManager.clearCart(); //empty database
+            cartList.clear();
+            adapter.notifyDataSetChanged();
             calculateCart();
+            Toast.makeText(this, "Order placed!", Toast.LENGTH_SHORT).show();
         });
+
     }
 
     private void initList() {
-        recyclerViewCart.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+       recyclerViewCart.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+       cartList = cartManager.getListCart();
+       adapter = new CartActivityAdapter(cartList, this, () -> calculateCart());
+       recyclerViewCart.setAdapter(adapter);
     }
 
     private void calculateCart() {
