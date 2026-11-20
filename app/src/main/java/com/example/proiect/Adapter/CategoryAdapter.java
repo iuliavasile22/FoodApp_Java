@@ -35,29 +35,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.categoryName.setText(categoriesDomains.get(position).getTitle());
-        String picUrl ="";
-        switch (position){
-            case 0: {
-                picUrl = "hamburger";
-                break;
-            }
-            case 1: {
-                picUrl = "pizza";
-                break;
-            }
-            case 2: {
-                picUrl = "hotd";
-                break;
-            }
-            case 3: {
-                picUrl = "donut";
-                break;
-            }
-            case 4: {
-                picUrl = "soda";
-                break;
-            }
-        }
+        String picUrl = categoriesDomains.get(position).getPic();
 
         int drawableResourceId = holder.itemView.getContext().getResources().getIdentifier(picUrl, "drawable", holder.itemView.getContext().getPackageName());
         Glide.with(holder.itemView.getContext()).load(drawableResourceId).into(holder.categoryPhoto);

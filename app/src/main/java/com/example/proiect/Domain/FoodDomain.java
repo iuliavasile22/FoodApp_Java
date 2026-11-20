@@ -3,21 +3,22 @@ package com.example.proiect.Domain;
 import java.io.Serializable;
 
 public class FoodDomain implements Serializable {
-    private int IndexInCart;
+    private int indexInCart;
     private String title;
-    private String picFood;
-    private String description;
-    private Double price;
-    private Double fee;
-    private int star;
+    private final String picFood;
+    private final String description;
+    private final Double price;
+    private final  Double fee;
+    private final  int star;
 
-    private Double calories;
-    private int time;
-    private String type;
+    private final Double calories;
+    private final int time;
+    private final String type;
 
 
-    public FoodDomain(int IndexInCart, String title, String picFood, String description, String type, Double price, Double fee, int star, Double calories, int time) {
-        this.IndexInCart = IndexInCart;
+    public FoodDomain(int indexInCart, String title, String picFood, String description, String type,
+                      Double price, Double fee, int star, Double calories, int time) {
+       this.indexInCart = indexInCart;
         this.title = title;
         this.picFood = picFood;
         this.description = description;
@@ -32,82 +33,46 @@ public class FoodDomain implements Serializable {
     }
 
     public int getIndexInCart() {
-        return IndexInCart;
+
+        return indexInCart;
     }
 
     public void setIndexInCart(int indexInCart) {
-        IndexInCart = indexInCart;
+
+        this.indexInCart = indexInCart;
     }
 
     public String getTitle() {
+
         return title;
     }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getStar() {
-        return star;
-    }
-
-    public void setStar(int star) {
-        this.star = star;
-    }
-
-    public Double getFee() {
-        return fee;
-    }
-
-    public void setFee(Double fee) {
-        this.fee = fee;
-    }
-
-    public Double getCalories() {
-        return calories;
-    }
-
-    public void setCalories(Double calories) {
-        this.calories = calories;
-    }
-
-    public int getTime() {
-        return time;
-    }
-
-    public void setTime(int time) {
-        this.time = time;
-    }
-
-    public String getType() {
-        return type;
-    }
-    public String getPicFood() {
+    public String getPicFood(){
         return picFood;
     }
 
-    public void setPicFood(String picFood) {
-        this.picFood = picFood;
+    public  String getDescription(){
+        return description;
+    }
+    public String getType(){
+        return type;
     }
 
     public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
-        this.price = price;
+    public Double getFee() {
+        return fee;
+    }
+    public int getStar(){
+        return star;
     }
 
+    public double getCalories(){
+        return calories;
+    }
+
+    public int getTime(){
+        return time;
+    }
 }
-
-
-

@@ -1,27 +1,19 @@
 package com.example.proiect.Domain;
 
-public class CategoriesDomain {
-    private String title;
-    private String pic;
+public class CategoriesDomain{
+    private final String title;
+    private final String pic;
 
-    public CategoriesDomain(String title, String pic) {
+    public CategoriesDomain(String title, String pic){
         this.title = title;
         this.pic = pic;
     }
 
-    public String getTitle() {
+    public String getTitle(){
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getPic() {
+    public String getPic(){
         return pic;
-    }
-
-    public void setPic(String pic) {
-        this.pic = pic;
     }
 }

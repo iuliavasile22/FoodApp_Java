@@ -23,7 +23,6 @@ public class CartManager {
     public void insertFood(FoodDomain item) {
         ArrayList<FoodDomain> listFood = getListCart();
 
-        // Make sure a new item has a quantity of at least 1
         if (item.getIndexInCart() < 1) {
             item.setIndexInCart(1);
         }
@@ -44,9 +43,7 @@ public class CartManager {
         Toast.makeText(context, "Item added to your cart", Toast.LENGTH_SHORT).show();
     }
 
-    /** Returns all items in the cart, read from the database. */
     public ArrayList<FoodDomain> getListCart() {
-        // FIX: the database now returns FoodDomain objects directly, no casting needed
         return database.getListObject(CART_KEY);
     }
 
@@ -58,7 +55,7 @@ public class CartManager {
         } else {
             listFood.get(position).setIndexInCart(listFood.get(position).getIndexInCart() - 1);
         }
-        // FIX: the change is now saved and the screen is notified (both were missing)
+
         database.putListObject(CART_KEY, listFood);
         changeIndexItemsListener.changed();
     }
@@ -77,11 +74,9 @@ public class CartManager {
         database.putListObject(CART_KEY, listFood);
     }
 
-    /** Sum of fee x quantity for every item in the cart. */
     public Double GetFee() {
         double fee = 0;
         for (FoodDomain food : getListCart()) {
-            // FIX: was fee + quantity (addition); it should be fee * quantity
             fee += food.getFee() * food.getIndexInCart();
         }
         return fee;
@@ -92,7 +87,6 @@ public class CartManager {
         return database.getTotalPrice();
     }
 
-    /** Empties the cart, e.g. after an order is placed. */
     public void clearCart() {
         database.clearCart();
     }

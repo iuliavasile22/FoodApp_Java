@@ -71,10 +71,9 @@ public class MainActivity extends AppCompatActivity {
     private void testCartDatabase() {
         ShoppingCartDatabase db = new ShoppingCartDatabase(this);
 
-        // 1. Start from an empty cart
         db.clearCart();
 
-        // 2. Insert two items
+
         long id1 = db.insertFoodItem(new FoodDomain(0, "hamburger", "burger",
                 "a delicious hamburger", "hamburger", 15.5, 10.2, 5, 40.2, 30));
         long id2 = db.insertFoodItem(new FoodDomain(0, "vegan pizza", "vegan_p",
@@ -87,11 +86,9 @@ public class MainActivity extends AppCompatActivity {
                     + " | photo " + f.getPicFood());
         }
 
-        // 4. Check count and total
         Log.d("CART_TEST", "Count: " + db.getItemCount());     // expected 2
         Log.d("CART_TEST", "Total: " + db.getTotalPrice());    // expected 28.7
 
-        // 5. Delete one and check again
         db.deleteItem((int) id1);
         Log.d("CART_TEST", "Count after delete: " + db.getItemCount());
     }

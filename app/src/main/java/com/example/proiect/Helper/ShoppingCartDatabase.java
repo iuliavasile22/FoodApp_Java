@@ -13,15 +13,9 @@ import com.example.proiect.Domain.FoodDomain;
 
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Local SQLite database that stores the user's shopping cart.
- * Each row in the "items" table is one food item added to the cart.
- */
 public class ShoppingCartDatabase extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "shopping_cart.db";
-    // Bumped to 5: onUpgrade() rebuilds the table with the fixed price column and the new quantity column
     private static final int DATABASE_VERSION = 5;
 
     private static final String TABLE_ITEMS = "items";
@@ -35,7 +29,7 @@ public class ShoppingCartDatabase extends SQLiteOpenHelper {
     private static final String COLUMN_ITEM_STAR = "star";
     private static final String COLUMN_ITEM_CALORIES = "calories";
     private static final String COLUMN_ITEM_TIME = "time";
-    private static final String COLUMN_ITEM_QUANTITY = "quantity";   // how many of this item are in the cart
+    private static final String COLUMN_ITEM_QUANTITY = "quantity";
 
     public ShoppingCartDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -46,10 +40,10 @@ public class ShoppingCartDatabase extends SQLiteOpenHelper {
         String createTable = "CREATE TABLE " + TABLE_ITEMS + " (" +
                 COLUMN_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_ITEM_TITLE + " TEXT, " +
-                COLUMN_ITEM_PHOTO + " TEXT, " +          // drawable resource name, e.g. "burger"
+                COLUMN_ITEM_PHOTO + " TEXT, " +
                 COLUMN_ITEM_DESCRIPTION + " TEXT, " +
                 COLUMN_ITEM_TYPE + " TEXT, " +
-                COLUMN_ITEM_PRICE + " REAL, " +           // FIX: space was missing before REAL
+                COLUMN_ITEM_PRICE + " REAL, " +
                 COLUMN_ITEM_FEE + " REAL, " +
                 COLUMN_ITEM_STAR + " INTEGER, " +
                 COLUMN_ITEM_CALORIES + " REAL, " +
@@ -60,20 +54,15 @@ public class ShoppingCartDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Simple strategy for a cart: drop and recreate (cart contents are lost on upgrade)
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ITEMS);
         onCreate(db);
     }
 
-    // ---------- INSERT ----------
-
-    /** Adds one item to the cart. Returns the new row id, or -1 if the insert failed. */
     public long insertFoodItem(FoodDomain food) {
         SQLiteDatabase db = getWritableDatabase();
         return insertFoodItem(db, food);
     }
 
-    /** Internal version that reuses an already-open database (needed inside transactions). */
     private long insertFoodItem(SQLiteDatabase db, FoodDomain food) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_ITEM_TITLE, food.getTitle());
@@ -85,7 +74,6 @@ public class ShoppingCartDatabase extends SQLiteOpenHelper {
         values.put(COLUMN_ITEM_STAR, food.getStar());
         values.put(COLUMN_ITEM_CALORIES, food.getCalories());
         values.put(COLUMN_ITEM_TIME, food.getTime());
-        // A quantity of 0 or less makes no sense in a cart, so store at least 1
         values.put(COLUMN_ITEM_QUANTITY, Math.max(1, food.getIndexInCart()));
         return db.insert(TABLE_ITEMS, null, values);
     }
@@ -101,7 +89,7 @@ public class ShoppingCartDatabase extends SQLiteOpenHelper {
         try {
             db.delete(TABLE_ITEMS, null, null);
             for (FoodDomain food : list) {
-                insertFoodItem(db, food);   // FIX: no longer closes the db mid-transaction
+                insertFoodItem(db, food);
             }
             db.setTransactionSuccessful();
         } finally {
@@ -109,16 +97,11 @@ public class ShoppingCartDatabase extends SQLiteOpenHelper {
         }
     }
 
-    // ---------- SELECT ----------
-
-    /** Returns every item currently in the cart. */
     public ArrayList<FoodDomain> getAllFoodItems() {
         ArrayList<FoodDomain> foodList = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
 
-        // try-with-resources closes the cursor automatically
         try (Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_ITEMS, null)) {
-            // FIX: look columns up by name instead of hardcoded (and wrong) indices
             int idCol = cursor.getColumnIndexOrThrow(COLUMN_ITEM_ID);
             int titleCol = cursor.getColumnIndexOrThrow(COLUMN_ITEM_TITLE);
             int photoCol = cursor.getColumnIndexOrThrow(COLUMN_ITEM_PHOTO);
@@ -150,7 +133,6 @@ public class ShoppingCartDatabase extends SQLiteOpenHelper {
         return foodList;
     }
 
-    /** Number of items in the cart. */
     public int getItemCount() {
         SQLiteDatabase db = getReadableDatabase();
         try (Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_ITEMS, null)) {
@@ -158,7 +140,6 @@ public class ShoppingCartDatabase extends SQLiteOpenHelper {
         }
     }
 
-    /** Total cart value (price x quantity for every item), computed by SQL. */
     public double getTotalPrice() {
         SQLiteDatabase db = getReadableDatabase();
         try (Cursor cursor = db.rawQuery(
@@ -168,23 +149,15 @@ public class ShoppingCartDatabase extends SQLiteOpenHelper {
         }
     }
 
-    // ---------- DELETE ----------
-
-    /** Removes one item from the cart by its row id. Uses a parameterized query ("?"). */
     public void deleteItem(int id) {
         SQLiteDatabase db = getWritableDatabase();
         db.delete(TABLE_ITEMS, COLUMN_ITEM_ID + " = ?", new String[]{String.valueOf(id)});
     }
 
-    /** Empties the cart (e.g. after an order is placed). */
     public void clearCart() {
         getWritableDatabase().delete(TABLE_ITEMS, null, null);
     }
 
-    /**
-     * Kept so existing code that calls getListObject(...) still works.
-     * Returns all items currently in the cart. The "key" parameter is not used.
-     */
     public ArrayList<FoodDomain> getListObject(String key) {
         return getAllFoodItems();
     }
